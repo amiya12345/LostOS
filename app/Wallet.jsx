@@ -1,189 +1,110 @@
-'use client'
-import React, { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+"use client";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import eliza from '../public/images/eliza.webp';
 
-const CyberpunkWallet = () => {
-  const [showFinalText, setShowFinalText] = useState(false);
-  const [showWallet, setShowWallet] = useState(false);
-  const [images, setImages] = useState([]);
+const CyberpunkIntro = () => {
   const [isMobile, setIsMobile] = useState(false);
-  
-  // Check if device is mobile
+  const [screenWidth, setScreenWidth] = useState(0);
+
+  // Check screen size and update dynamically
   useEffect(() => {
-    const checkMobile = () => {
+    const updateScreenSize = () => {
       setIsMobile(window.innerWidth < 768);
+      setScreenWidth(window.innerWidth);
     };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+
+    updateScreenSize();
+    window.addEventListener("resize", updateScreenSize);
+
+    return () => window.removeEventListener("resize", updateScreenSize);
   }, []);
 
-  // Generate random positions for images
-  const generateRandomPosition = () => ({
-    x: Math.random() * (window.innerWidth - 100),
-    y: Math.random() * (window.innerHeight - 100),
-  });
+  // Calculate responsive font sizes using vw with min/max clamps
+  const topTextFontSize = `clamp(1.5rem, ${screenWidth * 0.04}px, 3rem)`; // Scales between 1.5rem and 3rem
+  const lostOSFontSize = `clamp(3rem, ${screenWidth * 0.1}px, 6rem)`; // Scales between 3rem and 6rem
 
-  // Add new image at random intervals - keeping exactly as original
-  useEffect(() => {
-    const imageUrls = Array(20).fill().map((_, index) => `/images/${index + 1}.png`);
-    let timeoutIds = [];
-  
-    for (let i = 0; i < 100; i++) {
-      const timeout = setTimeout(() => {
-        const randomImageUrl = imageUrls[Math.floor(Math.random() * imageUrls.length)];
-        setImages(prev => [...prev, {
-          id: i,
-          position: generateRandomPosition(),
-          url: randomImageUrl
-        }]);
-      }, Math.random() * 25000); // Spread over 25 seconds
-      timeoutIds.push(timeout);
-    }
-
-    // Show final text after 30 seconds
-    const finalTextTimeout = setTimeout(() => {
-      setShowFinalText(true);
-    }, 30000);
-
-    // Show wallet after 32 seconds
-    const walletTimeout = setTimeout(() => {
-      setShowWallet(true);
-    }, 32000);
-
-    return () => {
-      timeoutIds.forEach(id => clearTimeout(id));
-      clearTimeout(finalTextTimeout);
-      clearTimeout(walletTimeout);
-    };
-  }, []);
+  // Calculate responsive dimensions for the image
+  const imageSize = `clamp(10rem, ${screenWidth * 0.3}px, 15rem)`; // Scales between 10rem and 15rem
+  const imageMarginTop = isMobile ? "1rem" : "2rem"; // Responsive margin
+  const textMargin = isMobile ? "0.5rem" : "1rem"; // Margin between text elements
 
   return (
-    <div className="min-h-screen bg-black text-green-400 font-mono relative overflow-hidden">
-      {/* Matrix-style background overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,20,0,0.8),rgba(0,10,0,0.9))] pointer-events-none" />
+    <div
+      className="min-h-screen text-white font-mono relative overflow-hidden flex flex-col items-center justify-center"
+      style={{
+        backgroundColor: "#000000", // Greenish-black background to match the edited image
+        backgroundImage: `radial-gradient(circle at 2px 2px, rgba(75, 243, 114, 0.2) 1px, transparent 0)`, // Subtle noise pattern
+        backgroundSize: "20px 20px",
+      }}
+    >
+      {/* Main content container */}
+      <div className="flex flex-col items-center justify-center text-center">
+        {/* Top text: "The Operating System for Degens" */}
+        <div
+          className="font-bold font-omiofont1 text-white"
+          style={{
+            fontSize: topTextFontSize,
+            marginBottom: textMargin,
+          }}
+        >
+          The Operating System for Degens
+        </div>
 
-      {/* Random appearing images - kept exactly the same */}
-      <AnimatePresence>
-        {images.map(image => (
-          <motion.div
-            key={image.id}
-            initial={{ scale: 0, x: image.position.x, y: image.position.y }}
-            animate={{ 
-              scale: 1,
-              filter: [
-                'brightness(1) contrast(100%)',
-                'brightness(1.2) contrast(150%)',
-                'brightness(1) contrast(100%)'
-              ]
-            }}
-            transition={{
-              scale: { duration: 0.5 },
-              filter: { duration: 0.2, repeat: Infinity }
-            }}
-            className="absolute"
-          >
-            <img
-              src={image.url}
-              alt="matrix"
-              className="w-[100%] h-[100%] object-cover opacity-80 mix-blend-screen"
-              style={isMobile ? { maxWidth: '60px', maxHeight: '60px' } : {}}
-            />
-          </motion.div>
-        ))}
-      </AnimatePresence>
+        {/* Center text: "LostOS" */}
+        <div
+          className="font-bold font-omiofont1 text-[#03FF24]"
+          style={{
+            fontSize: lostOSFontSize,
+            textShadow: "0 0 10px rgba(3, 255, 36, 0.5)",
+            marginBottom: textMargin,
+          }}
+        >
+          LostOS
+        </div>
 
-      {/* "It's not over" text */}
-      <AnimatePresence>
-        {showFinalText && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ 
-              opacity: [0, 1, 0.5, 1],
-              filter: [
-                'blur(10px)',
-                'blur(0px)',
-                'blur(5px)',
-                'blur(0px)'
-              ]
-            }}
-            transition={{ duration: 2 }}
-            className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${isMobile ? 'text-xl' : 'text-3xl'} font-omiofont1`}
-          >
-            IT&apos;S NOT OVER
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* Mascot image rendered using Next.js Image component */}
+        <Image
+          src={eliza}
+          alt="eliza"
+          width={1080} // Base width (will be scaled by style)
+          height={1080} // Base height (will be scaled by style)
+          sizes="(max-width: 768px) 160px, 240px" // Responsive sizes for different viewports
+          className="border border-green-500"
+          style={{
+            width: imageSize,
+            height: imageSize,
+            marginTop: imageMarginTop,
+            boxShadow: "0 0 10px rgba(3, 255, 36, 0.3)",
+            
+          }}
+          priority // Load eagerly since it's above the fold
+        />
 
-      {/* Wallet address with terminal effect */}
-      <AnimatePresence>
-        {showWallet && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ 
-              opacity: 1, 
-              y: 0,
-              textShadow: [
-                '0 0 5px #00ff00',
-                '0 0 15px #00ff00',
-                '0 0 5px #00ff00'
-              ]
+        {/* Powered by text with "elizaOS" as a link */}
+        <div
+          className="mt-4 text-gray-400 font-omiofont1 text-sm text-center"
+          style={{
+            fontSize: `clamp(0.75rem, ${screenWidth * 0.02}px, 1rem)`, // Scales between 0.75rem and 1rem
+          }}
+        >
+          Powered by{" "}
+          <Link
+            href="https://www.elizaos.ai/" // Replace with the actual URL
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#03FF24] hover:underline hover:text-[#05cc2d] transition-colors"
+            style={{
+              textShadow: "0 0 5px rgba(3, 255, 36, 0.3)",
             }}
-            transition={{ 
-              duration: 1,
-              textShadow: {
-                duration: 2,
-                repeat: Infinity,
-                ease: "linear"
-              }
-            }}
-            className={`absolute ${isMobile ? 'bottom-32' : 'bottom-1/4'} left-1/2 transform -translate-x-1/2 text-center ${isMobile ? 'w-[90%]' : ''}`}
           >
-            <div className={`bg-black/80 p-6 border border-green-500/30 backdrop-blur-sm ${isMobile ? 'rounded-lg' : ''}`}>
-              <motion.div
-                animate={{
-                  opacity: [1, 0.8, 1],
-                  scale: [1, 1.01, 1]
-                }}
-                transition={{
-                  duration: 0.5,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-                className={`${isMobile ? 'text-xs' : 'text-sm'} mb-2 font-omiofont1`}
-              >
-                &gt; INITIALIZING CA
-              </motion.div>
-              <motion.div 
-                className={`font-bold ${isMobile ? 'text-sm' : 'text-lg'} mt-2 break-all font-omiofont1`}
-                animate={{
-                  textShadow: [
-                    '0 0 5px #00ff00',
-                    '0 0 15px #00ff00',
-                    '0 0 5px #00ff00'
-                  ]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-              >
-             
-              </motion.div>
-              
-              {/* Mobile-only Android-style indicator */}
-              {isMobile && (
-                <div className="mt-4 w-12 h-1 bg-green-500/40 mx-auto rounded-full" />
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            elizaOS
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default CyberpunkWallet;
+export default CyberpunkIntro;

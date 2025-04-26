@@ -15,9 +15,10 @@ const MemeGenerator = () => {
 
   // Predefined meme templates (replace with your own image paths)
   const templates = [
-    'images/Trump_meme.png',
-    'images/2.png',
-    'images/3.png',
+    'images/GfBf.webp',
+    'images/RightMeme.webp',
+    'images/TrumpApproval.webp',
+    'images/DirectionMeme.webp',
   ];
 
   // Color schemes for text
@@ -370,9 +371,10 @@ const MemeGenerator = () => {
                 onChange={(e) => setSelectedTemplate(Number(e.target.value))}
                 className="w-full bg-black border border-green-500 p-2 text-green-400"
               >
-                <option value={0}>Template 1</option>
-                <option value={1}>Template 2</option>
-                <option value={2}>Template 3</option>
+                <option value={0}>GfBf</option>
+                <option value={1}>RightMeme</option>
+                <option value={2}>TrumpApproval</option>
+              
               </select>
             </div>
 

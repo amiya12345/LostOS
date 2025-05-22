@@ -248,10 +248,10 @@ export default function MatrixMusicPlayer() {
       <MatrixBackground isPlaying={isPlaying} />
       
       <div className="relative z-10 p-6">
-        <div className="bg-black/80 p-4 mb-4 font-mono text-green-400 border border-green-700 backdrop-blur-sm">
+        <div className="bg-black/80 p-4 mb-4 font-omiofont1 text-green-400 border border-green-700 backdrop-blur-sm">
           <div className="flex justify-between items-start">
             <div>
-              <div className="text-xl mb-2">
+              <div className="text-xl mb-2 font-omiofont1">
                 {playlist[currentTrack].title}
               </div>
               <div className="text-sm text-green-500">

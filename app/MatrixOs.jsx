@@ -41,8 +41,8 @@ const AppModal = memo(({ children, onClose, title, isLoading, isMobile }) => {
   const modalRef = useRef(null);
   const [dimensions, setDimensions] = useState(
     isMobile
-      ? null
-      : { width: window.innerWidth * 0.4, height: window.innerHeight * 0.7 }
+      ? { width: "100%", height: "calc(100% - 64px)" }
+      : { width: window.innerWidth * 0.8, height: window.innerHeight * 0.8 }
   );
   const rafRef = useRef(null);
   const lastUpdateRef = useRef(0);
@@ -137,11 +137,17 @@ const AppModal = memo(({ children, onClose, title, isLoading, isMobile }) => {
       dragControls={dragControls}
       dragListener={false}
       dragMomentum={false}
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
+      initial={{ x: "-50%", y: "-50%", scale: 0.8, opacity: 0 }}
+      animate={{ x: "-50%", y: "-50%", scale: 1, opacity: 1 }}
       exit={{ scale: 0.8, opacity: 0 }}
-      style={{ width: dimensions.width, height: dimensions.height }}
-      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/80 border-2 border-green-700 overflow-hidden shadow-lg z-50"
+      style={{
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        width: dimensions.width,
+        height: dimensions.height,
+      }}
+      className="bg-black/80 border-2 border-green-700 overflow-hidden shadow-lg z-50"
     >
       <motion.div
         className="bg-green-600 p-2 cursor-move flex justify-between items-center"
@@ -228,7 +234,7 @@ const AddressWidget = memo(({ isMobile }) => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={handleCopy}
-        className="ml-2 p-2 bg-green-700 text-green-100  hover:bg-green-600 transition-colors"
+        className="ml-2 p-2 bg-green-700 text-green-100 hover:bg-green-600 transition-colors"
       >
         {copied ? (
           <motion.span
